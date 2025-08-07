@@ -17,24 +17,32 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/30 text-foreground backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+        {/* Left: Logo */}
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <Store className="h-6 w-6 text-primary" />
           <span className="text-lg font-bold">Kirana Stores</span>
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="transition-colors hover:text-primary"
-              prefetch={false}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-4">
+
+        {/* Right: navItems + ThemeToggle + MobileMenu */}
+        <div className="flex items-center gap-6">
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="transition-colors hover:text-primary"
+                prefetch={false}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Theme toggle */}
           <ThemeToggle />
+
+          {/* Mobile nav */}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">

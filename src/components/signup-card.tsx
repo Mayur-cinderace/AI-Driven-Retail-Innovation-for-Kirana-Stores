@@ -41,6 +41,9 @@ const signupSchema = z.object({
   role: z.enum(["User", "Admin"], {
     required_error: "Please select a role.",
   }),
+  dob: z.coerce.date({
+    invalid_type_error: "Please enter a valid date.",
+  }),
 });
 
 type SignupValues = z.infer<typeof signupSchema>;
@@ -54,15 +57,35 @@ export function SignupCard() {
       name: "",
       mobileNumber: "",
       role: "User",
+      dob: new Date(),
     },
   });
 
-  function onSubmit(data: SignupValues) {
-    console.log(data);
-    toast({
-      title: "Signup Attempted",
-      description: `Name: ${data.name}, Role: ${data.role}, Mobile: ${data.mobileNumber}`,
-    });
+  async function onSubmit(data: SignupValues) {
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast({
+          title: "Signup Successful",
+          description: `Your login ID is: ${result.kiranaID}. Please save it securely.`,
+        });
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Signup Failed",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
@@ -86,6 +109,28 @@ export function SignupCard() {
                     <Input
                       placeholder="John Doe"
                       {...field}
+                      className="bg-background/80"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      value={
+                        field.value
+                          ? field.value.toISOString().split("T")[0]
+                          : ""
+                      }
+                      onChange={(e) => field.onChange(new Date(e.target.value))}
                       className="bg-background/80"
                     />
                   </FormControl>
@@ -135,8 +180,11 @@ export function SignupCard() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
-              Sign up with OTP
+            <Button
+              type="submit"
+              className="w-full bg-accent hover:bg-accent/90"
+            >
+              Sign up with KiranaID
             </Button>
           </form>
         </Form>

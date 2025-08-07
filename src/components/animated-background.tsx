@@ -30,11 +30,7 @@ const FallingLeaves = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
       {leaves.map((style, i) => (
-        <div
-          key={i}
-          className="absolute -top-10 animate-fall"
-          style={style}
-        >
+        <div key={i} className="absolute -top-10 animate-fall" style={style}>
           <LeafIcon className="h-6 w-6 text-primary/70" />
         </div>
       ))}
@@ -57,14 +53,20 @@ const FallingLeaves = () => {
   );
 };
 
-
 export function AnimatedBackground() {
   const { resolvedTheme } = useTheme();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
     <>
       <div className="fixed inset-0 z-[-1] h-screen w-full">
-        {resolvedTheme === 'light' && (
+        {resolvedTheme === "light" && (
           <Image
             src="https://placehold.co/1920x1080.png"
             alt="Sunny farm landscape"
@@ -75,7 +77,7 @@ export function AnimatedBackground() {
             priority
           />
         )}
-        {resolvedTheme === 'dark' && (
+        {resolvedTheme === "dark" && (
           <Image
             src="https://placehold.co/1920x1080.png"
             alt="Moonlit forest"
